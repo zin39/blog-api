@@ -48,7 +48,8 @@ A high-performance, secure, and scalable blog API built with Rust, Actix-Web, an
 
 ## Architecture
 ### Database Schema (ER Diagram)
-![ER Diagram](docs/er_diagram.png) <!-- Add your diagram later -->
+![ER Diagram](./ER-diagram.png)
+*Screenshot of the database schema designed in dbdiagram.io*
 - **Tables**: `users`, `posts`, `categories`, `tags`, `comments`, `likes`.
 - **Relationships**:
   - `posts` → `users` (author), `categories` (1:1), `tags` (many-to-many).
