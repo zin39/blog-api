@@ -1,25 +1,18 @@
-use actix_web::{get, http, App, HttpResponse, HttpServer, Responder};
-use diesel::{Connection, PgConnection};
-use tracing::info;
-
-#[get("/health")]
-async fn health_check() -> impl Responder {
-    info!("Health check requested");
-    let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-    match PgConnection::establish(&db_url) {
-        Ok(_) => HttpResponse::Ok().body("OK"),
-        Err(e) => {
-            HttpResponse::ServiceUnavailable().body(format!("Database connection failed: {}", e))
-        }
-    }
-}
+use actix_web::{web, App, HttpServer};
+use blog_api::{establish_connection_pool, health_check};
 
 #[actix_web::main]
-pub async fn main() -> std::io::Result<()> {
+async fn main() -> std::io::Result<()> {
     tracing_subscriber::fmt::init();
+    let pool = establish_connection_pool();
 
-    HttpServer::new(|| App::new().service(health_check))
-        .bind("0.0.0.0:8000")?
-        .run()
-        .await
+    HttpServer::new(move || {
+        App::new()
+            .app_data(web::Data::new(pool.clone()))
+            .service(health_check)
+    })
+    .bind("0.0.0.0:8000")?
+    .run()
+    .await
 }
+

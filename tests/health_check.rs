@@ -1,9 +1,9 @@
-use blog-api::{health_check}
+use blog_api::health_check;
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use actix_web::{test, web, App};
+    use actix_web::{test, App};
 
     #[actix_web::test]
     async fn test_health_check() {
